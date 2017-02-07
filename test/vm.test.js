@@ -149,19 +149,19 @@ test('create vm', function _test(t) {
     var vm;
     t.doesNotThrow(function _create() {
         var vm_uuid;
-        var instance;
+        var zoneid;
         var reader = new mod_kstat.Reader();
-        lib_common.listRunningZones(reader, function _list(err, zones) {
+        lib_common.fetchRunningZones(function _list(err, zones) {
             t.notOk(err, 'listRunningZones should not err');
             t.ok(zones, 'listRunningZones should return a zones object');
-            vm_uuid = Object.keys(zones)[0];
-            instance = zones[vm_uuid].instance;
+            vm_uuid = zones[0].uuid;
+            zoneid = zones[0].zoneid;
 
-            vm = new lib_instrumenterVm(vm_uuid, instance, reader);
+            vm = new lib_instrumenterVm(vm_uuid, zoneid, reader);
 
             t.ok(vm, 'vm is defined');
             t.deepEqual(vm._uuid, vm_uuid, '_uuid');
-            t.deepEqual(vm._instance, instance, '_instance');
+            t.deepEqual(vm._instance, zoneid, '_instance');
             t.deepEqual(vm._reader,  reader, '_reader');
             t.deepEqual(vm._kstatMetrics, kstatMetrics, '_kstatMetrics');
             t.deepEqual(vm._zfsMetrics, zfsMetrics, '_zfsMetrics');
