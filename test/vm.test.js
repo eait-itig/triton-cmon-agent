@@ -206,3 +206,150 @@ test('create vm fails', function _test(t) {
 
     t.end();
 });
+
+function _createVmInstrumenter(cb) {
+    var vm_uuid;
+    var zoneid;
+    var reader = new mod_kstat.Reader();
+    lib_common.fetchRunningZones(function _list(err, zones) {
+        if (err) {
+            cb(err);
+            return;
+        }
+
+        vm_uuid = zones[0].uuid;
+        zoneid = zones[0].zoneid;
+        cb(err, new lib_instrumenterVm(vm_uuid, zoneid, reader));
+        return;
+    });
+}
+
+test('getLinkKstats', function _test(t) {
+    t.plan(12);
+
+    _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
+        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        vmi.getLinkKstats(function _cb(err, stats) {
+            t.notOk(err, 'getLinkKStats should not return an error');
+            t.ok(stats, 'stats should return a link kstats object');
+
+            var linkKeys = Object.keys(kstatMetrics.link);
+            var lklen = linkKeys.length;
+            var statlen = Object.keys(stats).length;
+
+            t.equal(statlen, lklen, 'stat count does not match expected');
+
+            for (var i = 0; i < lklen; i++) {
+                var key = linkKeys[i];
+                t.ok(stats[key], 'link kstat is defined');
+                t.ok(isFinite(stats[key].value), 'value is int');
+            }
+
+            t.end();
+        });
+    });
+});
+
+test('getMemCapsKstats', function _test(t) {
+    t.plan(12);
+
+    _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
+        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        vmi.getMemCapsKstats(function _cb(err, stats) {
+            t.notOk(err, 'getMemCapsKStats should not return an error');
+            t.ok(stats, 'stats should return a link kstats object');
+
+            var mcapKeys = Object.keys(kstatMetrics.memory_caps);
+            var mcklen = mcapKeys.length;
+            var statlen = Object.keys(stats).length;
+
+            t.equal(statlen, mcklen, 'stat count does not match expected');
+
+            for (var i = 0; i < mcklen; i++) {
+                var key = mcapKeys[i];
+                t.ok(stats[key], 'memcap kstat is defined');
+                t.ok(isFinite(stats[key].value), 'value is int');
+            }
+
+            t.end();
+        });
+    });
+});
+
+test('getZonesKstats', function _test(t) {
+    t.plan(12);
+
+    _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
+        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        vmi.getZonesKstats(function _cb(err, stats) {
+            t.notOk(err, 'getZonesKStats should not return an error');
+            t.ok(stats, 'stats should return a link kstats object');
+
+            var zonesKeys = Object.keys(kstatMetrics.zones);
+            var zklen = zonesKeys.length;
+            var statlen = Object.keys(stats).length;
+
+            t.equal(statlen, zklen, 'stat count does not match expected');
+
+            for (var i = 0; i < zklen; i++) {
+                var key = zonesKeys[i];
+                t.ok(stats[key], 'zones kstat is defined');
+                t.ok(isFinite(stats[key].value), 'value is int');
+            }
+
+            t.end();
+        });
+    });
+});
+
+test('getZfsStats', function _test(t) {
+    t.plan(8);
+
+    _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
+        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        vmi.getZfsStats(function _cb(err, stats) {
+            t.notOk(err, 'getZfsStats should not return an error');
+            t.ok(stats, 'stats should return a link kstats object');
+
+            var zfsKeys = Object.keys(zfsMetrics);
+            var zklen = zfsKeys.length;
+            var statlen = Object.keys(stats).length;
+
+            t.equal(statlen, zklen, 'stat count does not match expected');
+
+            for (var i = 0; i < zklen; i++) {
+                var key = zfsKeys[i];
+                t.ok(stats[key], 'zones kstat is defined');
+                t.ok(isFinite(stats[key].value), 'value is int');
+            }
+
+            t.end();
+        });
+    });
+});
+
+test('getTimeStats', function _test(t) {
+    t.plan(6);
+
+    _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
+        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        vmi.getTimeStats(function _cb(err, stats) {
+            t.notOk(err, 'getTimeStats should not return an error');
+            t.ok(stats, 'stats should return a link kstats object');
+
+            var timeKeys = Object.keys(timeMetrics);
+            var tklen = timeKeys.length;
+            var statlen = Object.keys(stats).length;
+
+            t.equal(statlen, tklen, 'stat count does not match expected');
+
+            for (var i = 0; i < tklen; i++) {
+                var key = timeKeys[i];
+                t.ok(stats[key], 'time stat is defined');
+                t.ok(isFinite(stats[key].value), 'value is int');
+            }
+
+            t.end();
+        });
+    });
+});
