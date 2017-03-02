@@ -8,7 +8,7 @@
  * Copyright (c) 2017, Joyent, Inc.
  */
 
-/* Test the Metric Agent cache */
+/* Test the Metric Agent app */
 'use strict';
 
 var test = require('tape').test;
@@ -33,16 +33,25 @@ var DEFAULT_OPTS = { config: DEFAULT_CONFIG, log: log, ip: '127.0.0.1' };
 test('create app succeeds', function _test(t) {
     var app;
 
-    t.plan(4);
+    t.plan(10);
 
     t.doesNotThrow(function _createApp() {
         app = new lib_app(DEFAULT_OPTS);
     }, 'app created without error');
-    t.ok(app);
-    t.ok(app.server);
-    t.ok(app.collector);
+    t.ok(app, 'app');
 
-    // TODO: So much more
+    t.ok(app.config, 'app.config');
+    t.deepEqual(app.config, DEFAULT_CONFIG, 'config matches');
+
+    t.ok(app.ip, 'app.ip');
+    t.deepEqual(app.ip, DEFAULT_OPTS.ip, 'ip matches');
+
+    t.ok(app.log, 'app.log');
+    t.deepEqual(app.log, log, 'log matches');
+
+    t.ok(app.collector, 'app.collector');
+
+    t.ok(app.server, 'app.server');
 
     t.end();
 });
@@ -85,4 +94,26 @@ test('create app fails with bad or no opts', function _test(t) {
     t.notOk(app, 'app was not created');
 
     t.end();
+});
+
+test('start and close app succeeds', function _test(t) {
+    var app;
+
+    t.plan(5);
+
+    t.doesNotThrow(function _createApp() {
+        app = new lib_app(DEFAULT_OPTS);
+    }, 'app created without error');
+    t.ok(app, 'app');
+
+    t.doesNotThrow(function _startAndCloseApp() {
+        app.start(function _start() {
+            t.pass('start function called cb');
+            app.close(function _close() {
+                t.pass('close function called cb');
+                t.end();
+            });
+        });
+
+    }, 'app start and close called without error');
 });
