@@ -17,6 +17,7 @@ var mod_bunyan = require('bunyan');
 var mod_restify = require('restify');
 
 var lib_app = require('../lib/app');
+var lib_common = require('../lib/common');
 
 var log = mod_bunyan.createLogger({
     name: 'cmon-agent',
@@ -35,7 +36,7 @@ test('create app succeeds', function _test(t) {
 
     t.plan(10);
 
-    t.doesNotThrow(function _createApp() {
+    t.doesNotThrow(function _createapp() {
         app = new lib_app(DEFAULT_OPTS);
     }, 'app created without error');
     t.ok(app, 'app');
@@ -116,4 +117,53 @@ test('start and close app succeeds', function _test(t) {
         });
 
     }, 'app start and close called without error');
+});
+
+test('http get metrics for zone succeeds', function _test(t) {
+    t.plan(6);
+
+    var endpoint = 'http://127.0.0.1:' + DEFAULT_CONFIG.port;
+    lib_common.fetchRunningZones(function _cb(ferr, zones) {
+        t.notOk(ferr, 'ferr is not set');
+        t.ok(zones, 'zones is set');
+        t.ok(Array.isArray(zones), 'zones is an array');
+        t.ok(zones.length > 0, 'zones has elements');
+
+        var metrics_route = '/v1/' + zones[0].uuid + '/metrics';
+        var client = mod_restify.createStringClient({ url: endpoint });
+
+        var app = new lib_app(DEFAULT_OPTS);
+        app.start(function _start() {
+            setTimeout(function _timeout() {
+                client.get(metrics_route, function _get(err, req, res, data) {
+                    t.notOk(err, 'err is not set');
+                    t.ok(data, 'data is set');
+                    app.close(function _close() {
+                        t.end();
+                    });
+                });
+            }, 2000);
+        });
+    });
+});
+
+test('http get metrics for zone succeeds', function _test(t) {
+    t.plan(2);
+
+    var endpoint = 'http://127.0.0.1:' + DEFAULT_CONFIG.port;
+    var refresh_route = '/v1/refresh';
+    var client = mod_restify.createStringClient({ url: endpoint });
+
+    var app = new lib_app(DEFAULT_OPTS);
+    app.start(function _start() {
+        setTimeout(function _timeout() {
+            client.post(refresh_route, function _get(err, req, res, data) {
+                t.notOk(err, 'err is not set');
+                t.notOk(data, 'data is set');
+                app.close(function _close() {
+                    t.end();
+                });
+            });
+        }, 2000);
+    });
 });
