@@ -17,7 +17,7 @@ var mod_libuuid = require('libuuid');
 var lib_instrumenterVm = require('../lib/instrumenter/vm');
 var lib_common = require('../lib/common');
 
-var kstatMetrics = { link: {}, memory_caps: {}, zones: {} };
+var kstatMetrics = { link: {}, memory_caps: {}, tcp: {}, zones: {} };
 kstatMetrics.zones.cpuUserUsage =
 {
     module: 'zones',
@@ -116,6 +116,62 @@ kstatMetrics.link.netAggBytesOut =
     key: 'net_agg_bytes_out',
     type: 'counter',
     help: 'Aggregate outbound bytes'
+};
+kstatMetrics.tcp.attemptFails =
+{
+    module: 'tcp',
+    kstat_key: 'attemptFails',
+    key: 'failed_connection_attempt_count',
+    type: 'counter',
+    help: 'Failed TCP connection attempts'
+};
+kstatMetrics.tcp.retransmittedSegs =
+{
+    module: 'tcp',
+    kstat_key: 'retransSegs',
+    key: 'retransmitted_segment_count',
+    type: 'counter',
+    help: 'Retransmitted TCP segments'
+};
+kstatMetrics.tcp.duplicateAcks =
+{
+    module: 'tcp',
+    kstat_key: 'inDupAck',
+    key: 'duplicate_ack_count',
+    type: 'counter',
+    help: 'Duplicate TCP ACK count'
+};
+kstatMetrics.tcp.listenDrops =
+{
+    module: 'tcp',
+    kstat_key: 'listenDrop',
+    key: 'listen_drop_count',
+    type: 'counter',
+    help: 'TCP listen drops. Connection refused because backlog full'
+};
+kstatMetrics.tcp.listenDropQ0s =
+{
+    module: 'tcp',
+    kstat_key: 'listenDropQ0',
+    key: 'listen_drop_Q0_count',
+    type: 'counter',
+    help: 'TCP listen drops Q0. Connection refused from half-open queue'
+};
+kstatMetrics.tcp.halfOpenDrops =
+{
+    module: 'tcp',
+    kstat_key: 'halfOpenDrop',
+    key: 'half_open_drop_count',
+    type: 'counter',
+    help: 'TCP connection dropped from a full half-open queue'
+};
+kstatMetrics.tcp.retransmitTimeouts =
+{
+    module: 'tcp',
+    kstat_key: 'timRetransDrop',
+    key: 'retransmit_timeout_drop_count',
+    type: 'counter',
+    help: 'TCP connection dropped due to retransmit timeout'
 };
 
 var zfsMetrics = {};
