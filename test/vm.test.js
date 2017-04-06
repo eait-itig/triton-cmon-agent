@@ -280,17 +280,17 @@ kstatMetrics.zone_vfs.wcnt =
 {
     module: 'zone_vfs',
     kstat_key: 'wcnt',
-    key: 'vfs_elements_wait_state_count',
+    key: 'vfs_elements_wait_state',
     type: 'gauge',
-    help: 'VFS count of elements in wait state'
+    help: 'VFS number of elements in wait state'
 };
 kstatMetrics.zone_vfs.rcnt =
 {
     module: 'zone_vfs',
     kstat_key: 'rcnt',
-    key: 'vfs_elements_run_state_count',
-    type: 'counter',
-    help: 'VFS count of elements in run state'
+    key: 'vfs_elements_run_state',
+    type: 'gauge',
+    help: 'VFS number of elements in run state'
 };
 
 var zfsMetrics = {};
