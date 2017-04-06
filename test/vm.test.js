@@ -170,7 +170,7 @@ kstatMetrics.tcp.listenDropQ0s =
     kstat_key: 'listenDropQ0',
     key: 'tcp_listen_drop_Qzero_count',
     type: 'counter',
-    help: 'TCP listen drops Q0. Connection refused from half-open queue'
+    help: 'Total # of connections refused due to half-open queue (q0) full'
 };
 kstatMetrics.tcp.halfOpenDrops =
 {
@@ -242,7 +242,7 @@ kstatMetrics.zone_vfs.writes =
     kstat_key: 'writes',
     key: 'vfs_write_operation_count',
     type: 'counter',
-    help: 'VFS number write operations'
+    help: 'VFS number of write operations'
 };
 kstatMetrics.zone_vfs.wtime =
 {
@@ -281,7 +281,7 @@ kstatMetrics.zone_vfs.wcnt =
     module: 'zone_vfs',
     kstat_key: 'wcnt',
     key: 'vfs_elements_wait_state_count',
-    type: 'counter',
+    type: 'gauge',
     help: 'VFS count of elements in wait state'
 };
 kstatMetrics.zone_vfs.rcnt =
@@ -403,7 +403,7 @@ test('getLinkKstats', function _test(t) {
     t.plan(12);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getLinkKstats(function _cb(err, stats) {
             t.notOk(err, 'getLinkKStats should not return an error');
             t.ok(stats, 'stats should return a link kstats object');
@@ -429,7 +429,7 @@ test('getMemCapsKstats', function _test(t) {
     t.plan(14);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getMemCapsKstats(function _cb(err, stats) {
             t.notOk(err, 'getMemCapsKStats should not return an error');
             t.ok(stats, 'stats should return a memory_cap kstats object');
@@ -455,7 +455,7 @@ test('getTcpKstats', function _test(t) {
     t.plan(24);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getTcpKstats(function _cb(err, stats) {
             t.notOk(err, 'getTcpKStats should not return an error');
             t.ok(stats, 'stats should return a tcp kstats object');
@@ -481,7 +481,7 @@ test('getZoneVfsKstats', function _test(t) {
     t.plan(24);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getZoneVfsKstats(function _cb(err, stats) {
             t.notOk(err, 'getZoneVfsKStats should not return an error');
             t.ok(stats, 'stats should return a zone_vfs kstats object');
@@ -507,7 +507,7 @@ test('getZonesKstats', function _test(t) {
     t.plan(12);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getZonesKstats(function _cb(err, stats) {
             t.notOk(err, 'getZonesKStats should not return an error');
             t.ok(stats, 'stats should return a link kstats object');
@@ -533,7 +533,7 @@ test('getZfsStats', function _test(t) {
     t.plan(8);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getZfsStats(function _cb(err, stats) {
             t.notOk(err, 'getZfsStats should not return an error');
             t.ok(stats, 'stats should return a link kstats object');
@@ -559,7 +559,7 @@ test('getTimeStats', function _test(t) {
     t.plan(6);
 
     _createVmInstrumenter(function _cvmi(cvmierr, vmi) {
-        t.notOk(cvmierr, 'creating vm instrumenter should not return an error');
+        t.ifError(cvmierr, 'creating vm instrumenter does not error');
         vmi.getTimeStats(function _cb(err, stats) {
             t.notOk(err, 'getTimeStats should not return an error');
             t.ok(stats, 'stats should return a link kstats object');
