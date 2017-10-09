@@ -50,11 +50,13 @@ test('collectors-common/time works as expected', function _test(t) {
                 'time': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzTime(_, cb) {
-                    collector.getMetrics('gz', function (err, metrics) {
+                    collector.getMetrics('gz',
+                        function _gotMetricsCb(err, metrics) {
+
                         t.ifError(err, 'getMetrics should succeed for GZ');
                         if (!err) {
                             t.deepEqual(metrics.trim().split('\n'),
@@ -64,7 +66,9 @@ test('collectors-common/time works as expected', function _test(t) {
                         cb();
                     });
                 }, function getVmTime(_, cb) {
-                    collector.getMetrics(vmUuid, function (err, metrics) {
+                    collector.getMetrics(vmUuid,
+                        function _gotMetrics(err, metrics) {
+
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
                             t.deepEqual(metrics.trim().split('\n'),
@@ -75,11 +79,12 @@ test('collectors-common/time works as expected', function _test(t) {
                     });
                 }, function getInvalidVmTime(_, cb) {
                     collector.getMetrics(invalidVmUuid,
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ok(err, 'getMetrics should fail for VM');
                         t.equal(err.code, 'ENOTFOUND', 'expected ENOTFOUND');
-                        t.equal(metrics, undefined, 'expected metrics to be undefined');
+                        t.equal(metrics, undefined,
+                            'expected metrics to be undefined');
                         cb();
                     });
                 }
@@ -96,6 +101,7 @@ test('collectors-gz/arcstats works as expected', function _test(t) {
     var expectedMetrics;
     var mockData = {};
 
+    /* BEGIN JSSTYLED */
     mockData = {
         kstats: [{
             'class': 'misc',
@@ -191,6 +197,7 @@ test('collectors-gz/arcstats works as expected', function _test(t) {
         timestamp: Date.now(), // doesn't actually matter to this test
         vms: {}
     };
+    /* BEGIN JSSTYLED */
 
     /* eslint-disable */
     /* BEGIN JSSTYLED */
@@ -445,11 +452,13 @@ test('collectors-gz/arcstats works as expected', function _test(t) {
                 'arcstats': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
-                    collector.getMetrics('gz', function (err, metrics) {
+                    collector.getMetrics('gz',
+                        function _gotMetrics(err, metrics) {
+
                         t.ifError(err, 'getMetrics should succeed for GZ');
                         if (!err) {
                             t.deepEqual(metrics.trim().split('\n'),
@@ -472,6 +481,8 @@ test('collectors-gz/cpu_info works as expected', function _test(t) {
     var expectedMetrics;
     var mockData = {};
 
+    /* eslint-disable */
+    /* BEGIN JSSTYLED */
     mockData = {
         kstats: [{
             'class': 'misc',
@@ -510,6 +521,8 @@ test('collectors-gz/cpu_info works as expected', function _test(t) {
         timestamp: Date.now(), // doesn't actually matter to this test
         vms: {}
     };
+    /* END JSSTYLED */
+    /* eslint-enable */
 
     expectedMetrics = [
         '# HELP cpu_info_model CPU model',
@@ -523,8 +536,8 @@ test('collectors-gz/cpu_info works as expected', function _test(t) {
                 'cpu_info': true
             }
         }, mockData: mockData
-    }, function (collector) {
-        collector.getMetrics('gz', function (err, metrics) {
+    }, function _collectorCreatedCb(collector) {
+        collector.getMetrics('gz', function _gotMetrics(err, metrics) {
             t.ifError(err, 'getMetrics should succeed for GZ');
             if (!err) {
                 t.deepEqual(metrics.trim().split('\n'),
@@ -848,12 +861,12 @@ test('collectors-vm/link works as expected w/ 2 vnics', function _test(t) {
                 'link': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('61c64afd-6c69-44b3-94fc-bcd17234e268',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
@@ -1173,12 +1186,12 @@ test('collectors-vm/link works as expected w/ 1 vnic', function _test(t) {
                 'link': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('f0b7e8d8-8f76-46db-b292-6d8124212ea1',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
@@ -1266,12 +1279,12 @@ test('collectors-vm/memcap works as expected', function _test(t) {
                 'memcap': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('b55cf19c-4898-4bd1-9169-b89b472d0621',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
@@ -1374,6 +1387,8 @@ test('collectors-vm/tcp works as expected', function _test(t) {
         }
     };
 
+    /* eslint-disable */
+    /* BEGIN JSSTYLED */
     expectedMetrics = [
         '# HELP tcp_failed_connection_attempt_count Failed TCP connection attempts',
         '# TYPE tcp_failed_connection_attempt_count counter',
@@ -1406,6 +1421,8 @@ test('collectors-vm/tcp works as expected', function _test(t) {
         '# TYPE tcp_current_established_connections_total gauge',
         'tcp_current_established_connections_total 411'
     ];
+    /* END JSSTYLED */
+    /* eslint-enable */
 
     collector_harness.createCollector({
         enabledCollectors: {
@@ -1413,12 +1430,12 @@ test('collectors-vm/tcp works as expected', function _test(t) {
                 'tcp': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('ddda3938-eca5-4a03-b7b2-2fe79b5b2dd1',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
@@ -1473,12 +1490,12 @@ test('collectors-vm/zfs works as expected', function _test(t) {
                 'zfs': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('319cb666-4797-4387-83ed-56d865fd25f4',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
@@ -1564,12 +1581,12 @@ test('collectors-vm/zone_misc works as expected', function _test(t) {
                 'zone_misc': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('319cb666-4797-4387-83ed-56d865fd25f4',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {
@@ -1636,6 +1653,8 @@ test('collectors-vm/zone_vfs works as expected', function _test(t) {
         }
     };
 
+    /* eslint-disable */
+    /* BEGIN JSSTYLED */
     expectedMetrics = [
         '# HELP vfs_bytes_read_count VFS number of bytes read',
         '# TYPE vfs_bytes_read_count counter',
@@ -1668,6 +1687,8 @@ test('collectors-vm/zone_vfs works as expected', function _test(t) {
         '# TYPE vfs_elements_run_state gauge',
         'vfs_elements_run_state 0'
     ];
+    /* END JSSTYLED */
+    /* eslint-enable */
 
     collector_harness.createCollector({
         enabledCollectors: {
@@ -1675,12 +1696,12 @@ test('collectors-vm/zone_vfs works as expected', function _test(t) {
                 'zone_vfs': true
             }
         }, mockData: mockData
-    }, function (collector) {
+    }, function _collectorCreatedCb(collector) {
         mod_vasync.pipeline({
             funcs: [
                 function getGzArcstats(_, cb) {
                     collector.getMetrics('319cb666-4797-4387-83ed-56d865fd25f4',
-                        function (err, metrics) {
+                        function _gotMetrics(err, metrics) {
 
                         t.ifError(err, 'getMetrics should succeed for VM');
                         if (!err) {

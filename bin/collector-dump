@@ -36,10 +36,7 @@
 var mod_fs = require('fs');
 
 var mod_assert = require('assert-plus');
-var mod_bunyan = require('bunyan');
 var mod_dashdash = require('dashdash');
-var mod_jsprim = require('jsprim');
-var mod_vasync = require('vasync');
 
 var collector_harness = require('../test/collector-harness');
 
@@ -69,12 +66,6 @@ var CLI_OPTIONS = [
         helpArg: 'VM_UUID'
     }
 ];
-
-var log = mod_bunyan.createLogger({
-    name: 'collector_dump',
-    level: process.env['LOG_LEVEL'] || 'error',
-    stream: process.stderr
-});
 
 function dumpHelp(parser, outputFn) {
     var help = parser.help({includeEnv: true}).trimRight();
@@ -158,11 +149,11 @@ function processData(config, callback) {
     mod_assert.string(config.target, 'config.target');
     mod_assert.func(callback, 'callback');
 
-    mod_fs.readFile(config.filename, function _onRead(err, data) {
+    mod_fs.readFile(config.filename, function _onRead(readErr, data) {
         var jsonObj;
 
-        if (err) {
-            callback(err);
+        if (readErr) {
+            callback(readErr);
             return;
         }
 
@@ -171,7 +162,9 @@ function processData(config, callback) {
         collector_harness.createCollector({
             mockData: jsonObj
         }, function _collectorCb(collector) {
-            collector.getMetrics(config.target, function (err, metrics) {
+            collector.getMetrics(config.target,
+                function _gotMetrics(err, metrics) {
+
                 if (err) {
                     callback(err);
                     return;
