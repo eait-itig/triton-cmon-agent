@@ -28,7 +28,6 @@ test('collectors-common/time works as expected', function _test(t) {
     var vmUuid = mod_libuuid.create();
 
     mockData = {
-        kstats: [],
         timestamp: sampleTimestamp,
         vms: {}
     };
@@ -194,8 +193,7 @@ test('collectors-gz/arcstats works as expected', function _test(t) {
                 'demand_hit_predictive_prefetch': 836127
             }
         }],
-        timestamp: Date.now(), // doesn't actually matter to this test
-        vms: {}
+        timestamp: Date.now() // doesn't actually matter to this test
     };
     /* BEGIN JSSTYLED */
 
@@ -518,8 +516,7 @@ test('collectors-gz/cpu_info works as expected', function _test(t) {
                 'socket_type': 'Unknown'
             }
         }],
-        timestamp: Date.now(), // doesn't actually matter to this test
-        vms: {}
+        timestamp: Date.now() // doesn't actually matter to this test
     };
     /* END JSSTYLED */
     /* eslint-enable */
@@ -1461,8 +1458,6 @@ test('collectors-vm/zfs works as expected', function _test(t) {
     var mockData = {};
 
     mockData = {
-        'kstats': [
-        ],
         'timestamp': 1507476390091,
         'vms': {
             '319cb666-4797-4387-83ed-56d865fd25f4': {

@@ -308,12 +308,21 @@ function collectData(config, callback) {
                 }
             ]
         }, function _afterPipeline(err) {
+            var resultObj = {
+                timestamp: timestamp
+            };
+
             dummyCollector.stop();
-            callback(err, {
-                kstats: kstats,
-                timestamp: timestamp,
-                vms: vms
-            });
+
+            if (kstats.length > 0) {
+                resultObj.kstats = kstats;
+            }
+
+            if (Object.keys(vms).length > 0) {
+                resultObj.vms = vms;
+            }
+
+            callback(err, resultObj);
         });
     });
 }

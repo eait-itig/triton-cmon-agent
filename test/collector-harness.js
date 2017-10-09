@@ -58,10 +58,16 @@ function mockRefreshZoneCache(callback) {
     var self = this; // eslint-disable-line
 
     mod_assert.object(self.mockData, 'self.mockData');
-    mod_assert.object(self.mockData.vms, 'self.mockData.vms');
+    mod_assert.optionalObject(self.mockData.vms, 'self.mockData.vms');
 
     var idx;
     var keys;
+
+    // when mockdata has no .vms, we'll treat it as empty
+    if (!self.mockData.hasOwnProperty('vms')) {
+        callback();
+        return;
+    }
 
     keys = Object.keys(self.mockData.vms);
 
