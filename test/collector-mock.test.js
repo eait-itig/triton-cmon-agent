@@ -828,28 +828,20 @@ test('collectors-vm/link works as expected w/ 2 vnics', function _test(t) {
     expectedMetrics = [
         '# HELP net_agg_packets_in Aggregate inbound packets',
         '# TYPE net_agg_packets_in counter',
-        'net_agg_packets_in{label=vnic0} 8942538',
+        'net_agg_packets_in{interface="vnic0"} 8942538',
         '# HELP net_agg_bytes_out Aggregate outbound bytes',
         '# TYPE net_agg_bytes_out counter',
-        'net_agg_bytes_out{label=vnic0} 386700874',
+        'net_agg_bytes_out{interface="vnic0"} 386700874',
         '# HELP net_agg_packets_out Aggregate outbound packets',
         '# TYPE net_agg_packets_out counter',
-        'net_agg_packets_out{label=vnic0} 5029565',
+        'net_agg_packets_out{interface="vnic0"} 5029565',
         '# HELP net_agg_bytes_in Aggregate inbound bytes',
         '# TYPE net_agg_bytes_in counter',
-        'net_agg_bytes_in{label=vnic0} 551194436',
-        '# HELP net_agg_packets_in Aggregate inbound packets',
-        '# TYPE net_agg_packets_in counter',
-        'net_agg_packets_in{label=vnic1} 244580',
-        '# HELP net_agg_bytes_out Aggregate outbound bytes',
-        '# TYPE net_agg_bytes_out counter',
-        'net_agg_bytes_out{label=vnic1} 418432',
-        '# HELP net_agg_packets_out Aggregate outbound packets',
-        '# TYPE net_agg_packets_out counter',
-        'net_agg_packets_out{label=vnic1} 6215',
-        '# HELP net_agg_bytes_in Aggregate inbound bytes',
-        '# TYPE net_agg_bytes_in counter',
-        'net_agg_bytes_in{label=vnic1} 15497110'
+        'net_agg_bytes_in{interface="vnic0"} 551194436',
+        'net_agg_packets_in{interface="vnic1"} 244580',
+        'net_agg_bytes_out{interface="vnic1"} 418432',
+        'net_agg_packets_out{interface="vnic1"} 6215',
+        'net_agg_bytes_in{interface="vnic1"} 15497110'
     ];
 
     collector_harness.createCollector({
@@ -1165,16 +1157,16 @@ test('collectors-vm/link works as expected w/ 1 vnic', function _test(t) {
     expectedMetrics = [
         '# HELP net_agg_packets_in Aggregate inbound packets',
         '# TYPE net_agg_packets_in counter',
-        'net_agg_packets_in{label=vnic0} 6348522',
+        'net_agg_packets_in{interface="vnic0"} 6348522',
         '# HELP net_agg_bytes_out Aggregate outbound bytes',
         '# TYPE net_agg_bytes_out counter',
-        'net_agg_bytes_out{label=vnic0} 204461637',
+        'net_agg_bytes_out{interface="vnic0"} 204461637',
         '# HELP net_agg_packets_out Aggregate outbound packets',
         '# TYPE net_agg_packets_out counter',
-        'net_agg_packets_out{label=vnic0} 1696748',
+        'net_agg_packets_out{interface="vnic0"} 1696748',
         '# HELP net_agg_bytes_in Aggregate inbound bytes',
         '# TYPE net_agg_bytes_in counter',
-        'net_agg_bytes_in{label=vnic0} 360616500'
+        'net_agg_bytes_in{interface="vnic0"} 360616500'
     ];
 
     collector_harness.createCollector({

@@ -87,7 +87,7 @@ test('get metrics returns expected metrics for first VM', function _test(t) {
                     var metric_name = metric_parts[0];
                     var metric_value = metric_parts[1];
                     /* BEGIN JSSTYLED */
-                    t.ok(/^[a-zA-Z0-9_{}=]+$/.test(metric_name),
+                    t.ok(/^[a-zA-Z0-9_{}=\"\"]+$/.test(metric_name),
                         'metric name contains only name/label characters, ' +
                         'got: ' + metric_name);
                     /* END JSSTYLED */
