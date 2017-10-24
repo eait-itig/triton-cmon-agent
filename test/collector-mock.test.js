@@ -2091,9 +2091,9 @@ test('collectors-gz/ntp works as expected', function _test(t) {
     /* eslint-disable */
     /* BEGIN JSSTYLED */
     expectedMetrics = [
-        '# HELP ntp_ntpd_available_boolean Whether ntpd was available, 0 = false, 1 = true',
-        '# TYPE ntp_ntpd_available_boolean gauge',
-        'ntp_ntpd_available_boolean 1',
+        '# HELP ntp_metrics_available_boolean Whether ntp metrics were available, 0 = false, 1 = true',
+        '# TYPE ntp_metrics_available_boolean gauge',
+        'ntp_metrics_available_boolean 1',
         '# HELP ntp_dropped_packets_total Number of packets dropped on reception',
         '# TYPE ntp_dropped_packets_total counter',
         'ntp_dropped_packets_total 0',
@@ -2268,9 +2268,6 @@ test('collectors-gz/ntp works as expected', function _test(t) {
         '# HELP ntp_syspeer_dispersion_seconds Total dispersion between the local ntpd and the system peer',
         '# TYPE ntp_syspeer_dispersion_seconds gauge',
         'ntp_syspeer_dispersion_seconds 0.029195',
-        '# HELP ntp_syspeer_leap_indicator_status Indicates whether or not there is a leap second upcoming on the system peer',
-        '# TYPE ntp_syspeer_leap_indicator_status gauge',
-        'ntp_syspeer_leap_indicator_status 0',
         '# HELP ntp_syspeer_headway_seconds The interval between the last packet sent or received and the next packet',
         '# TYPE ntp_syspeer_headway_seconds gauge',
         'ntp_syspeer_headway_seconds 0',
@@ -2283,6 +2280,9 @@ test('collectors-gz/ntp works as expected', function _test(t) {
         '# HELP ntp_syspeer_jitter_ppm The RMS differences relative to the lowest delay sample',
         '# TYPE ntp_syspeer_jitter_ppm gauge',
         'ntp_syspeer_jitter_ppm 0.974',
+        '# HELP ntp_syspeer_leap_indicator_status Indicates whether or not there is a leap second upcoming on the system peer',
+        '# TYPE ntp_syspeer_leap_indicator_status gauge',
+        'ntp_syspeer_leap_indicator_status 0',
         '# HELP ntp_syspeer_offset_seconds The combined offset of server relative to this host',
         '# TYPE ntp_syspeer_offset_seconds gauge',
         'ntp_syspeer_offset_seconds 4.03e-7',
@@ -2451,3 +2451,57 @@ test('collectors-gz/ntp works as expected', function _test(t) {
     });
 });
 
+
+test('collectors-gz/ntp works as expected when ntpd unavailable',
+function _test(t) {
+    var expectedMetrics;
+    var mockData = {};
+
+    mockData = {
+        ntp: {
+            'ntpd_available': 0
+        },
+        timestamp: Date.now() // doesn't actually matter to this test
+    };
+
+    /* eslint-disable */
+    /* BEGIN JSSTYLED */
+    expectedMetrics = [
+        '# HELP ntp_metrics_available_boolean Whether ntp metrics were available, 0 = false, 1 = true',
+        '# TYPE ntp_metrics_available_boolean gauge',
+        'ntp_metrics_available_boolean 0'
+    ];
+    /* END JSSTYLED */
+    /* eslint-enable */
+
+    collector_harness.createCollector({
+        enabledCollectors: {
+            'collectors-gz': {
+                'ntp': true
+            }
+        }, mockData: mockData
+    }, function _collectorCreatedCb(collector) {
+        mod_vasync.pipeline({
+            funcs: [
+                function getNtpData(_, cb) {
+                    collector.getMetrics('gz',
+                        function _gotMetrics(err, metrics) {
+
+                        t.ifError(err, 'getMetrics should succeed for GZ');
+                        if (!err) {
+                            t.deepEqual(metrics.trim().split('\n'),
+                                expectedMetrics,
+                                'GZ ntp metrics match expected');
+                        }
+                        cb();
+                    });
+                }
+            ]
+        }, function pipelineCb(err) {
+            t.ifError(err, 'collectors-gz/ntp should work when ntpd is ' +
+                'unavailable');
+            collector.stop();
+            t.end();
+        });
+    });
+});
